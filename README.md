@@ -1,1 +1,1 @@
-to clone this repo, use 'git clone --recurse-submodules <repo>'
+to clone this repo, use 'git clone --recurse-submodules'
