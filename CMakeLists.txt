@@ -13,7 +13,10 @@ add_executable(${CMAKE_PROJECT_NAME} WIN32
 	src/main.cpp
 )
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/helpers)
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
+	${CMAKE_SOURCE_DIR}/src/helpers
+	${CMAKE_SOURCE_DIR}/src/std_includes
+)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 	d3d12
