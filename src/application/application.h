@@ -7,6 +7,8 @@ class Application
 public:
 	static int Run(Demo* demo, HINSTANCE hInstance, int nCmdShow);
 
+	static HWND GetHwnd();
+
 private:
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

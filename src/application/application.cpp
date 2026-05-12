@@ -1,9 +1,14 @@
 #include <std_includes.h>
 
 #include "application.h"
-#define UNICODE
 
 HWND Application::m_hwnd = nullptr;
+
+HWND Application::GetHwnd()
+{
+	return m_hwnd;
+}
+
 int Application::Run(Demo *demo, HINSTANCE hInstance, int nCmdShow)
 {
 	demo->ParseCommandLineArgs();
