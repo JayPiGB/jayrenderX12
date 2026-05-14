@@ -8,9 +8,11 @@ set(CMAKE_SYSTEM_VERSION 10.0.26100.0)
 add_subdirectory(external/DirectX-Headers)
 
 add_executable(${CMAKE_PROJECT_NAME} WIN32
-	# src/command_queue/command_queue.cpp
-	# src/application/application.cpp
 	src/main.cpp
+	src/application/application.h
+	src/application/application.cpp
+	src/renderer/renderer.h
+	src/renderer/renderer.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
