@@ -9,20 +9,20 @@ HWND Application::GetHwnd()
 	return m_hwnd;
 }
 
-int Application::Run(Demo *demo, HINSTANCE hInstance, int nCmdShow)
+int Application::Run(Renderer *renderer, HINSTANCE hInstance, int nCmdShow)
 {
-	demo->ParseCommandLineArgs();
+	renderer->ParseCommandLineArgs();
 
 	WNDCLASSEXW windowClass{};
 	InitializeWindowClass(hInstance, L"JayrenderX12 window class", &windowClass);
 	RegisterClassExW(&windowClass);
 
-	RECT windowRect = { 0, 0, static_cast<LONG>(demo->GetWidth()), static_cast<LONG>(demo->GetHeight()) };
+	RECT windowRect = { 0, 0, static_cast<LONG>(renderer->GetWidth()), static_cast<LONG>(renderer->GetHeight()) };
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-	m_hwnd = CreateApplicationWindow(windowClass.lpszClassName, hInstance, L"JayrenderX12", demo->GetWidth(), demo->GetHeight());
+	m_hwnd = CreateApplicationWindow(windowClass.lpszClassName, hInstance, L"JayrenderX12", windowRect, renderer);
 
-	demo->OnInit();
+	renderer->OnInit();
 
 	ShowWindow(m_hwnd, nCmdShow);
 
@@ -36,14 +36,40 @@ int Application::Run(Demo *demo, HINSTANCE hInstance, int nCmdShow)
 		}
 	}
 
-	demo->OnDestroy();
+	renderer->OnDestroy();
 
 	return static_cast<char>(msg.wParam);
 }
 
+void Application::InitializeWindowClass(HINSTANCE hInst, const wchar_t* windowClassName, WNDCLASSEXW* windowClass)
+{
+	windowClass->cbSize = sizeof(WNDCLASSEX);
+	windowClass->style = CS_HREDRAW | CS_VREDRAW;
+	windowClass->lpfnWndProc = &WindowProc;
+	windowClass->hInstance = hInst;
+	windowClass->hCursor = LoadCursor(NULL, IDC_ARROW);
+	windowClass->lpszClassName = windowClassName;
+}
+
+HWND Application::CreateApplicationWindow(const wchar_t* windowClassName, HINSTANCE hInst, const wchar_t* windowTitle, RECT& windowRect, Renderer* renderer) {
+	return CreateWindow(
+		windowClassName,
+		windowTitle,
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		windowRect.right - windowRect.left,
+		windowRect.bottom - windowRect.top,
+		nullptr,
+		nullptr,
+		hInst,
+		renderer
+	);
+}
+
 LRESULT CALLBACK Application::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Demo* demo = reinterpret_cast<Demo*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	Renderer* renderer = reinterpret_cast<Renderer*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	switch(message)
 	{
@@ -55,10 +81,10 @@ LRESULT CALLBACK Application::WindowProc(HWND hWnd, UINT message, WPARAM wParam,
 			return 0;
 		case WM_KEYDOWN:
 		case WM_PAINT:
-			if (demo)
+			if (renderer)
 			{
-				demo->OnUpdate();
-				demo->OnRender();
+				renderer->OnUpdate();
+				renderer->OnRender();
 			}
 			return 0;
 			
