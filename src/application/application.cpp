@@ -15,7 +15,7 @@ int Application::Run(Renderer *renderer, HINSTANCE hInstance, int nCmdShow)
 
 	WNDCLASSEXW windowClass{};
 	InitializeWindowClass(hInstance, L"JayrenderX12 window class", &windowClass);
-	RegisterClassExW(&windowClass);
+	RegisterClassEx(&windowClass);
 
 	RECT windowRect = { 0, 0, static_cast<LONG>(renderer->GetWidth()), static_cast<LONG>(renderer->GetHeight()) };
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
