@@ -299,7 +299,7 @@ void Renderer::LoadCubePSO()
 		psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader.Get());
 		psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader.Get());
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		psoDesc.DepthStencilState = depthStencilDesc;
 		psoDesc.SampleMask = UINT_MAX;
@@ -410,10 +410,14 @@ void Renderer::LoadCubeMesh()
 		{ {1.0f, 0.0f, 1.0f}, {0.9f, 0.35f, 0.0f} },
 
 		//left green
-		{ {0.0f, 1.0f, 0.0f}, {0.2f, 0.8f, 0.2f} },
+		//{ {0.0f, 1.0f, 0.0f}, {0.2f, 0.8f, 0.2f} },
+		//{ {0.0f, 1.0f, 1.0f}, {0.2f, 0.8f, 0.2f} },
+		//{ {0.0f, 0.0f, 1.0f}, {0.2f, 0.8f, 0.2f} },
+		//{ {0.0f, 0.0f, 0.0f}, {0.2f, 0.8f, 0.2f} },
 		{ {0.0f, 1.0f, 1.0f}, {0.2f, 0.8f, 0.2f} },
-		{ {0.0f, 0.0f, 1.0f}, {0.2f, 0.8f, 0.2f} },
+		{ {0.0f, 1.0f, 0.0f}, {0.2f, 0.8f, 0.2f} },
 		{ {0.0f, 0.0f, 0.0f}, {0.2f, 0.8f, 0.2f} },
+		{ {0.0f, 0.0f, 1.0f}, {0.2f, 0.8f, 0.2f} },
 
 		//top white
 		{ {0.0f, 1.0f, 0.0f}, {1.f, 1.f, 1.f} },
@@ -422,10 +426,15 @@ void Renderer::LoadCubeMesh()
 		{ {1.0f, 1.0f, 0.0f}, {1.f, 1.f, 1.f} },
 
 		//bottom yellow
-		{ {0.0f, 0.0f, 0.0f}, {1.f, 0.6f, 0.f} },
+		//{ {0.0f, 0.0f, 0.0f}, {1.f, 0.6f, 0.f} },
+		//{ {0.0f, 0.0f, 1.0f}, {1.f, 0.6f, 0.f} },
+		//{ {1.0f, 0.0f, 1.0f}, {1.f, 0.6f, 0.f} },
+		//{ {1.0f, 0.0f, 0.0f}, {1.f, 0.6f, 0.f} },
+
 		{ {0.0f, 0.0f, 1.0f}, {1.f, 0.6f, 0.f} },
-		{ {1.0f, 0.0f, 1.0f}, {1.f, 0.6f, 0.f} },
+		{ {0.0f, 0.0f, 0.0f}, {1.f, 0.6f, 0.f} },
 		{ {1.0f, 0.0f, 0.0f}, {1.f, 0.6f, 0.f} },
+		{ {1.0f, 0.0f, 1.0f}, {1.f, 0.6f, 0.f} },
 	};
 
 	const UINT vertexBufferSize = sizeof(cubeVertexData);
