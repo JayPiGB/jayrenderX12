@@ -34,6 +34,11 @@ int Application::Run(Renderer *renderer, HINSTANCE hInstance, int nCmdShow)
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		else
+		{
+			renderer->OnRender();
+		}
 	}
 
 	renderer->OnDestroy();
@@ -79,7 +84,6 @@ LRESULT CALLBACK Application::WindowProc(HWND hWnd, UINT message, WPARAM wParam,
 				SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(createStruct->lpCreateParams));
 			}
 			return 0;
-		case WM_KEYDOWN:
 		case WM_PAINT:
 			if (renderer)
 			{
@@ -88,9 +92,39 @@ LRESULT CALLBACK Application::WindowProc(HWND hWnd, UINT message, WPARAM wParam,
 			}
 			return 0;
 			
+		case WM_KEYDOWN:
+			switch (wParam)
+			{
+				case 'W':
+					renderer->MoveCamera(FRONT);
+					return 0;
+
+				case 'S':
+					renderer->MoveCamera(BACK);
+					return 0;
+
+				case 'A': 
+					renderer->MoveCamera(LEFT);
+					return 0;
+
+				case 'D':
+					renderer->MoveCamera(RIGHT	);
+					return 0;
+
+				case 'Q':
+					renderer->MoveCamera(DOWN);
+					return 0;
+
+				case 'E':
+					renderer->MoveCamera(UP);
+					return 0;
+			}
+
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
+
+		
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);

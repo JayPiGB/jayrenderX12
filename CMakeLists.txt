@@ -13,6 +13,10 @@ add_executable(${CMAKE_PROJECT_NAME} WIN32
 	src/application/application.cpp
 	src/renderer/renderer.h
 	src/renderer/renderer.cpp
+	src/stb_image.h
+	src/texture/texture.h
+	src/texture/texture.cpp
+	src/camera/camera.h
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 

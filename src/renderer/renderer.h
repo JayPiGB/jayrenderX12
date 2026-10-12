@@ -1,14 +1,23 @@
 #pragma once
+#include <chrono>
 
 #include <std_includes.h>
-
 using namespace DirectX;
+
+#include "../camera/camera.h"
 
 struct Vertex
 {
 	XMFLOAT3 position;
 	XMFLOAT3 color;
-	XMFLOAT3 uv;
+	XMFLOAT2 uv;
+};
+
+struct TEXTURE_DESC
+{
+	int height;
+	int width;
+	int nChannels;
 };
 
 static const UINT frameCount = 2;
@@ -28,7 +37,12 @@ public:
 	UINT GetWidth();
 	UINT GetHeight();
 	float GetAspectRatio();
-	
+
+	void UpdateDeltaTime();
+
+	void MoveCamera(CAMERA_MOVEMENT movement);
+
+	float m_deltaTime;
 
 	//pipeline objects
 	CD3DX12_VIEWPORT m_viewport;
@@ -43,6 +57,9 @@ public:
 	ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
 	ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
 	UINT m_rtvDescriptorSize;
+
+	ComPtr<ID3D12DescriptorHeap> m_srvHeap;
+
 	ComPtr<ID3D12RootSignature> m_rootSignature;
 	ComPtr<ID3D12PipelineState> m_pipelineState;
 
@@ -56,14 +73,10 @@ public:
 	D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
 
 	void LoadPipeline();
-	void LoadTrianglePSO();
-	void LoadTriangleMesh();
+	void LoadAssets();
+
 	void PopulateCommandList();
 	void WaitForPreviousFrame();
-
-	void LoadQuadPSO();
-	void LoadQuadMesh();
-	void DrawQuad();
 
 	struct alignas(256) SceneCB
 	{
@@ -78,26 +91,8 @@ public:
 	void LoadSceneCB();
 	void UpdateSceneCB();
 
-
-	ComPtr<ID3D12Resource> m_quadVertexBuffer;
-	D3D12_VERTEX_BUFFER_VIEW m_quadVertexBufferView;
-
-	ComPtr<ID3D12Resource> m_quadIndexBuffer;
-	D3D12_INDEX_BUFFER_VIEW m_quadIndexBufferView;
-
-	ComPtr<ID3D12PipelineState> m_quadPSO;
-	ComPtr<ID3D12RootSignature> m_quadRootSignature;
-
-	struct alignas(256) QuadCB
-	{
-		XMFLOAT4X4 model;
-	};
-
-	QuadCB m_quadCBData;
-	ComPtr<ID3D12Resource> m_quadCB;
-	UINT8* m_pQuadCBResource;
-
-	void UpdateQuadCB();
+	void AllocateTexture();
+	ComPtr<ID3D12Resource> m_textureResource;
 
 #pragma region CUBE
 	ComPtr<ID3D12Resource> m_cubeVertexBuffer;
@@ -109,12 +104,12 @@ public:
 	ComPtr<ID3D12PipelineState> m_cubePSO;
 	ComPtr<ID3D12RootSignature> m_cubeRootSignature;
 
-	struct alignas(256) CubeCB
+	struct alignas(256) ModelCB
 	{
 		XMFLOAT4X4 model;
 	};
 
-	CubeCB m_cubeCBData;
+	ModelCB m_cubeCBData;
 	ComPtr<ID3D12Resource> m_cubeCB;
 	UINT8* m_pCubeCBResource;
 
@@ -125,6 +120,22 @@ public:
 	void DrawCube();
 #pragma endregion
 
+#pragma region LIGHT_SOURCE
+	ComPtr<ID3D12Resource> m_lightSrcVertexBuffer;
+	D3D12_VERTEX_BUFFER_VIEW m_lightSrcVertexBufferView;
+
+	ComPtr<ID3D12Resource> m_lightSrcIndexBuffer;
+	D3D12_INDEX_BUFFER_VIEW m_lightSrcIndexBufferView;
+
+	ComPtr<ID3D12PipelineState> m_lightSrcPSO;
+	ComPtr<ID3D12RootSignature> m_lightSrcRootSignature;
+
+	ModelCB m_lightSrcCBData;
+	ComPtr<ID3D12Resource> m_lightSrcCB;
+	UINT8* m_pLightSrcCBResource;
+
+	void LoadLightSourceMesh();
+
 private:
 	UINT m_width;
 	UINT m_height;
@@ -133,4 +144,7 @@ private:
 	std::wstring m_assetsPath;
 
 	ComPtr<IDXGIAdapter4> GetAdapter(IDXGIFactory4* factory);
+
+	Camera m_Camera;
 };
+ 
