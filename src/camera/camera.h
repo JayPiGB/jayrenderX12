@@ -13,9 +13,9 @@ enum CAMERA_MOVEMENT {
 	RIGHT
 };
 
-const float YAW = -90.0f;
+const float YAW = 90.0f; //should face toward positive Z for LH
 const float PITCH = 0.0f;
-const float ROW = 0.0f;
+const float ROLL = 0.0f;
 const float SPEED = 12.0f;
 const float ZOOM = 0.0f;
 
@@ -23,12 +23,12 @@ class Camera
 {
 public:
 	XMFLOAT3 mPosition;
-	XMFLOAT3 mFocus; //review changing this to mFocus
+	XMFLOAT3 mFocus;
 	XMFLOAT3 mUp;
 
 	float mYaw;
 	float mPitch;
-	float mRow;
+	float mRoll;
 
 	float mMovementSpeed;
 	float mMouseSensitivity;
@@ -40,7 +40,7 @@ public:
 		mUp(0.0f, 1.0f, 0.0f),
 		mYaw(YAW),
 		mPitch(PITCH),
-		mRow(ROW),
+		mRoll(ROLL),
 		mMovementSpeed(SPEED),
 		mMouseSensitivity(0.1f),
 		mZoom(ZOOM) { }
@@ -56,51 +56,52 @@ public:
 	void MoveCamera(CAMERA_MOVEMENT movement, float deltaTime)
 	{
 		float cameraSpeed = mMovementSpeed * deltaTime;
-		//XMFLOAT3 movementFront = mFocus;
-		//movementFront.y = 0.0f;
 
-		auto position = XMLoadFloat3(&mPosition);
-		//mFocus.y = 0.0f;
-		auto focus = XMLoadFloat3(&mFocus);
-		auto up = XMLoadFloat3(&mUp);
+		auto camPosition = XMLoadFloat3(&mPosition);
 
-		XMVECTOR mov{};
+		mFocus.x = cos(XMConvertToRadians(mYaw)) * cos(XMConvertToRadians(mPitch));
+		mFocus.y = sin(XMConvertToRadians(mPitch));
+		mFocus.z = sin(XMConvertToRadians(mYaw)) * cos(XMConvertToRadians(mPitch));
+
+		auto camFocus = XMLoadFloat3(&mFocus);
+		auto camUp = XMLoadFloat3(&mUp);
+
+		XMVECTOR right = XMVector3Normalize((XMVector3Cross(camFocus, camUp)));;
 		switch (movement)
 		{
 			case FRONT:
-				position += cameraSpeed * focus;
+				camPosition += cameraSpeed * camFocus;
 				break;
 
 			case BACK:
-				position -= cameraSpeed * focus;
+				camPosition -= cameraSpeed * camFocus;
 				break;
 
 			case LEFT:
-				mov = XMVector3Normalize((XMVector3Cross(focus, up)));
-				position -= cameraSpeed * mov;
-				focus -= cameraSpeed * mov;
+				camPosition -= cameraSpeed * right;
+				//focus -= cameraSpeed * mov;
 				break;
 
 			case RIGHT:
-				mov = XMVector3Normalize((XMVector3Cross(focus, up)));
-				position += cameraSpeed * XMVector3Normalize((XMVector3Cross(focus, up)));
-				focus += cameraSpeed * mov;
+				right = XMVector3Normalize((XMVector3Cross(camFocus, camUp)));
+				camPosition += cameraSpeed * XMVector3Normalize((XMVector3Cross(camFocus, camUp)));
+				//focus += cameraSpeed * mov;
 				break;
 
 			case UP:
-				mov = XMVector3Normalize(up);
-				position += cameraSpeed * mov;
-				focus += cameraSpeed * mov;
+				camUp = XMVector3Normalize(camUp);
+				camPosition += cameraSpeed * camUp;
+				//focus += cameraSpeed * mov;
 				break;
 
 			case DOWN:
-				mov = XMVector3Normalize(up);
-				position -= cameraSpeed * mov;
-				focus -= cameraSpeed * mov;
+				camUp = XMVector3Normalize(camUp);
+				camPosition -= cameraSpeed * camUp;
+				//focus -= cameraSpeed * mov;
 				break;
 		}
 
-		XMStoreFloat3(&mPosition, position);
-		XMStoreFloat3(&mFocus, focus);
+		XMStoreFloat3(&mPosition, camPosition);
+		XMStoreFloat3(&mFocus, camFocus);
 	}
 };
